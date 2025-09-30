@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
+#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/20 09:45:35 by injah             #+#    #+#              #
-#    Updated: 2025/09/27 11:48:41 by injah            ###   ########.fr        #
+#    Updated: 2025/09/30 16:31:48 by bvaujour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ LIBUI = -Llibui -lui 					\
         -Llibui/SDL_image/lib -lSDL2_image	\
         -lm
 
-CC = gcc
+CC = cc
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

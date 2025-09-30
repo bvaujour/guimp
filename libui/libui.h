@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/09/30 09:40:28 by injah            ###   ########.fr       */
+/*   Updated: 2025/09/30 19:24:09 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct	s_widget
 	t_config			*config;
 	void				(*update)();
 	void				(*destroy)();
+	bool				is_durty;
 	struct s_container	*container;
 	struct s_ctx		*ctx;
 	struct s_core		*core;
@@ -118,6 +119,7 @@ typedef struct	s_container
 	bool			is_durty;
 	SDL_Point		wheel_offset;
 	SDL_Point		max_scroll;
+	SDL_Rect		total_widget_rect;
 }				t_container;
 
 typedef struct	s_ctx
@@ -145,9 +147,11 @@ typedef struct	s_core
 	int				screen_h;
 	t_config		config;
 	SDL_Point		mouse;
-	bool			left_click;
 	Uint32			focused_window_id;
 	SDL_Point		wheel;
+	bool			scrolled;
+	bool			left_click;
+	bool			lshift;
 }				t_core;
 
 
@@ -157,7 +161,7 @@ void 			ui_get_sdl_version();
 
 SDL_Surface		*ui_copy_surface(SDL_Surface *surface);
 void			ui_fill_surf(SDL_Surface *surface, SDL_Color color);
-SDL_Surface		*ui_new_surf(int width, int height);
+SDL_Surface		*ui_new_surf(int width, int height, SDL_Color *color);
 void			ui_blit_centered(SDL_Surface *src, SDL_Surface *dst);
 void			ui_blit(SDL_Surface *src, SDL_Surface *dst, int x, int y);
 
@@ -180,6 +184,8 @@ void			ui_destroy_button(t_widget *button);
 void			ui_bind_button(t_widget *button, void(*f)(), void *param);
 
 void			ui_rebuild_container(t_container *container);
+void			ui_build_container(t_container *container);
+
 
 
 #endif

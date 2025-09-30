@@ -1,6 +1,6 @@
 # sdl pkg-config source file
 
-prefix=/home/injah/Downloads/SDL2-2.32.10/build/../local
+prefix=/home/bvaujour/projets/SDL/local
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
@@ -10,6 +10,5 @@ Description: Simple DirectMedia Layer is a cross-platform multimedia library des
 Version: 2.32.10
 Requires.private: 
 Conflicts:
-Libs: -L${libdir} -Wl,-rpath,${libdir} -Wl,--enable-new-dtags -lSDL2 
-Libs.private:  -lm -lpthread
-Cflags: -I${includedir} -I${includedir}/SDL2   -D_REENTRANT
+Libs: -L${libdir}   -lSDL2    -pthread  -lm
+Cflags: -I${includedir} -I${includedir}/SDL2  -D_REENTRANT

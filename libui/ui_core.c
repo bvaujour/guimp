@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_core.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 09:56:09 by injah            ###   ########.fr       */
+/*   Updated: 2025/09/30 18:49:56 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ void	ui_run(t_core *core)
 	SDL_ShowWindow(core->ctxs[2].window);
 	while (core->is_running)
 	{
+		core->scrolled = false;
+		core->wheel.x = 0;
+		core->wheel.y = 0;
 		if (SDL_WaitEvent(&core->event))
 		{
 			// if (core->event.type == SDL_KEYDOWN)
@@ -76,11 +79,22 @@ void	ui_run(t_core *core)
 			// 	printf("scancode: %d, sym: %d\n", core->event.key.keysym.scancode, core->event.key.keysym.sym);
 			// 	core->hotkeys[core->event.key.keysym.scancode] = true;
 			// }
-			if (core->event.type == SDL_KEYUP)
+			if (core->event.type == SDL_KEYDOWN)
 			{
 				if (core->event.key.keysym.sym == SDLK_ESCAPE)
 				{
 					core->is_running = false;
+				}
+				if (core->event.key.keysym.sym == SDLK_LSHIFT)
+				{
+					core->lshift = true;
+				}
+			}
+			if (core->event.type == SDL_KEYUP)
+			{
+				if (core->event.key.keysym.sym == SDLK_LSHIFT)
+				{
+					core->lshift = false;
 				}
 			}
 			else if (core->event.type == SDL_DROPFILE)
@@ -113,8 +127,11 @@ void	ui_run(t_core *core)
 			else if (core->event.type == SDL_MOUSEWHEEL)
 			{
 				printf("core->event.wheel.x: %d\n", core->event.wheel.x);
-				core->wheel.x = core->event.wheel.x;
-				core->wheel.y = core->event.wheel.y;
+				if (core->lshift == true)
+					core->wheel.x = core->event.wheel.y;
+				else
+					core->wheel.y = core->event.wheel.y;
+				core->scrolled = true;
 			}
 			else if (core->event.type == SDL_QUIT)
 				core->is_running = false;

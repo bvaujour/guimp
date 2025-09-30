@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_update.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 18:41:16 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 09:58:16 by injah            ###   ########.fr       */
+/*   Updated: 2025/09/30 19:19:42 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ui_update_button(t_widget *button)
 		{
 			ui_change_button_state(button, CLICKED);
 			if (button->button_data.binded_function)
-				button->button_data.binded_function(button->button_data.param, 3, 4);
+				button->button_data.binded_function(button->button_data.param, 3);
 		}
 		else
 			ui_change_button_state(button, HOVERED);
@@ -43,21 +43,12 @@ void	ui_update_button(t_widget *button)
 
 void	ui_container_consume_scroll(t_container *container)
 {
-	container->wheel_offset.x += container->core->wheel.x * SCROLL_SPEED;
 	container->wheel_offset.y += container->core->wheel.y * SCROLL_SPEED;
-	printf("container->core->wheel.x: %d\n", container->core->wheel.x);
+	container->wheel_offset.x += container->core->wheel.x * SCROLL_SPEED;
+	printf("\ncontainer->wheel_offset.y: %d\n", container->wheel_offset.y);
+	printf("container->max_scroll.y: %d\n", container->max_scroll.y);
 	printf("container->wheel_offset.x: %d\n", container->wheel_offset.x);
 	printf("container->max_scroll.x: %d\n", container->max_scroll.x);
-	if (container->wheel_offset.x > 0)
-		container->wheel_offset.x = 0;
-	else if (container->wheel_offset.x < -container->max_scroll.x)
-		container->wheel_offset.x = -container->max_scroll.x;
-	if (container->wheel_offset.y > 0)
-		container->wheel_offset.y = 0;
-	else if (container->wheel_offset.y < -container->max_scroll.y)
-		container->wheel_offset.y = -container->max_scroll.y;
-	container->core->wheel.x = 0;
-	container->core->wheel.y = 0;
 }
 
 void	ui_update_container(t_container *container)
@@ -69,7 +60,10 @@ void	ui_update_container(t_container *container)
 	if (SDL_PointInRect(&container->core->mouse, &container->rect))
 	{
 		container->core->focused_container = container;
-		ui_container_consume_scroll(container);
+		if (container->core->scrolled)
+			ui_container_consume_scroll(container);
+		container->is_durty = true;
+		container->ctx->is_durty = true;
 	}
 	container->core->focused_widget = NULL;
 	while (i < container->nb_widget)

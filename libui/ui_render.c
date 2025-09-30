@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_render.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:42:58 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 09:23:44 by injah            ###   ########.fr       */
+/*   Updated: 2025/09/30 19:13:51 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ static void	ui_render_ctx_elements(t_ctx *ctx)
 		container = &ctx->containers[i];
 		if (container->is_durty)
 		{
-			ui_rebuild_container(container);
-			// container->is_durty = false;
+			ui_build_container(container);
+			container->is_durty = false;
 		}
 		SDL_RenderCopy(ctx->renderer, container->texture, NULL, &container->rect);
 		i++;
@@ -86,7 +86,7 @@ void	ui_render(t_core *core)
 			ui_render_ctx(ctx);
 			ui_render_ctx_elements(ctx);	
 			SDL_RenderPresent(ctx->renderer);
-			// ctx->is_durty = false;
+			ctx->is_durty = false;
 		}
 		i++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 13:17:08 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 09:21:15 by injah            ###   ########.fr       */
+/*   Updated: 2025/09/30 19:12:26 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,15 @@ void	ui_build_button(t_widget *button, char *label, int font_size, t_offset padd
 	TTF_SetFontSize(button->config->font, font_size);
 	txt_surf = TTF_RenderText_Blended(button->config->font, label, UI_WHITE);
 
-	default_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom);
-	ui_fill_surf(default_surf, button->config->button_color[DEFAULT]);
+	default_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom, &button->config->button_color[DEFAULT]);
 	ui_blit(txt_surf, default_surf, padding.left, padding.top);
 	button->button_data.surfaces[DEFAULT] = default_surf;
 
-	hovered_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom);
-	ui_fill_surf(hovered_surf, button->config->button_color[HOVERED]);
+	hovered_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom, &button->config->button_color[HOVERED]);
 	ui_blit(txt_surf, hovered_surf, padding.left, padding.top);
 	button->button_data.surfaces[HOVERED] = hovered_surf;
 
-	clicked_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom);
-	ui_fill_surf(clicked_surf, button->config->button_color[CLICKED]);
+	clicked_surf = ui_new_surf(txt_surf->clip_rect.w + padding.left + padding.right, txt_surf->clip_rect.h + padding.top + padding.bottom, &button->config->button_color[CLICKED]);
 	ui_blit(txt_surf, clicked_surf, padding.left, padding.top);
 	button->button_data.surfaces[CLICKED] = clicked_surf;
 
@@ -66,6 +63,22 @@ t_widget	*ui_add_button(t_container *container, char *label, int font_size, t_of
 	ui_build_button(button, label, font_size, padding);
 	button->surface = button->button_data.surfaces[DEFAULT];
 	button->rect = button->surface->clip_rect;
+	if (container->direction == TOPTOBOTTOM)
+	{
+		button->relative.x = 0;
+		button->relative.y = container->total_widget_rect.h;
+		container->total_widget_rect.h += button->rect.h;
+		if (button->rect.w > container->total_widget_rect.w)
+			container->total_widget_rect.w = button->rect.w;
+	}
+	else if (container->direction == LEFTTORIGHT)
+	{
+		button->relative.x = container->total_widget_rect.w;
+		button->relative.y = 0;
+		container->total_widget_rect.w += button->rect.w;
+		if (button->rect.h > container->total_widget_rect.h)
+			container->total_widget_rect.h = button->rect.h;
+	}
 	container->nb_widget++;
 	return (button);
 }
