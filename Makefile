@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
+#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/20 09:45:35 by injah             #+#    #+#              #
-#    Updated: 2025/09/30 16:31:48 by bvaujour         ###   ########.fr        #
+#    Updated: 2025/10/01 20:20:44 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ SRC = main.c
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Wall -Werror -Wextra -g -O0 		\
+CFLAGS = -Wall -Werror -Wextra -g		\
          -Ilibui						\
          -Ilibui/SDL/include/SDL2		\
          -Ilibui/SDL_ttf/include/SDL2	\

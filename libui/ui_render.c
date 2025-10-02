@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_render.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:42:58 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 19:13:51 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/02 06:18:52 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,76 +17,76 @@
 // 	t_button_data	*data;
 
 // 	data = &button->button_data;
-// 	SDL_RenderCopy(button->ctx->renderer, data->textures[data->state], NULL, &button->rect);
+// 	SDL_RenderCopy(button->context->renderer, data->textures[data->state], NULL, &button->rect);
 // }
 
 
-// static void	ui_render_container_elements(t_container *container)
+// static void	ui_render_box_elements(t_box *box)
 // {
 // 	t_widget	*widget;
 // 	int			i;
 
 // 	i = 0;
-// 	while (i < container->nb_widget)
+// 	while (i < box->nb_widget)
 // 	{
-// 		widget = &container->widgets[i];
+// 		widget = &box->widgets[i];
 // 		widget->render(widget);
 // 		i++;
 // 	}
 // }
 
 
-// static void	ui_render_container(t_container *container)
+// static void	ui_render_box(t_box *box)
 // {
-// 	SDL_RenderCopy(container->ctx->renderer, container->texture, NULL, &container->rect);
+// 	SDL_RenderCopy(box->context->renderer, box->texture, NULL, &box->rect);
 // }
 
 
 
 
-static void	ui_render_ctx_elements(t_ctx *ctx)
+static void	ui_render_context_elements(t_context *context)
 {
-	t_container	*container;
+	t_box	*box;
 	int			i;
 	
 	i = 0;
-	while (i < ctx->nb_container)
+	while (i < context->nb_box)
 	{
-		container = &ctx->containers[i];
-		if (container->is_durty)
+		box = &context->boxs[i];
+		if (box->is_durty)
 		{
-			ui_build_container(container);
-			container->is_durty = false;
+			ui_build_box(box);
+			box->is_durty = false;
 		}
-		SDL_RenderCopy(ctx->renderer, container->texture, NULL, &container->rect);
+		SDL_RenderCopy(context->renderer, box->texture, NULL, &box->rect);
 		i++;
 	}
 }
 
-static void	ui_render_ctx(t_ctx *ctx)
+static void	ui_render_context(t_context *context)
 {
 	SDL_Color	color;
 
-	color = ctx->config->window_color;
-	SDL_SetRenderDrawColor(ctx->renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderClear(ctx->renderer);
+	color = context->core->config.window_color;
+	SDL_SetRenderDrawColor(context->renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderClear(context->renderer);
 }
 
 void	ui_render(t_core *core)
 {
-	t_ctx	*ctx;
+	t_context	*context;
 	int 	i;
 
 	i = 0;
-	while (i < core->nb_ctxs)
+	while (i < core->nb_contexts)
 	{
-		ctx = &core->ctxs[i];
-		if (ctx->is_durty)
+		context = &core->contexts[i];
+		if (context->is_durty)
 		{
-			ui_render_ctx(ctx);
-			ui_render_ctx_elements(ctx);	
-			SDL_RenderPresent(ctx->renderer);
-			ctx->is_durty = false;
+			ui_render_context(context);
+			ui_render_context_elements(context);	
+			SDL_RenderPresent(context->renderer);
+			context->is_durty = false;
 		}
 		i++;
 	}

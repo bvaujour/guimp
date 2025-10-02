@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_destroy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:25:00 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 18:08:36 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/02 06:47:28 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,50 +22,50 @@ void	ui_destroy_button(t_widget *button)
 		SDL_FreeSurface(button->button_data.surfaces[CLICKED]);
 }
 
-static void	ui_destroy_container(t_container *container)
+static void	ui_destroy_box(t_box *box)
 {
 	t_widget	*widget;
 	int			i;
 
-	if (container->texture)
-		SDL_DestroyTexture(container->texture);
 	i = 0;
-	while (i < container->nb_widget)
+	while (i < box->nb_widget)
 	{
-		widget = &container->widgets[i];
+		widget = &box->widgets[i];
 		widget->destroy(widget);
 		i++;
 	}
+	if (box->texture)
+		SDL_DestroyTexture(box->texture);
 }
 
-static void	ui_destroy_ctx(t_ctx *ctx)
+static void	ui_destroy_context(t_context *context)
 {
-	t_container	*container;
+	t_box	*box;
 	int	i;
 
 	i = 0;
-	while (i < ctx->nb_container)
+	while (i < context->nb_box)
 	{
-		container = &ctx->containers[i];
-		ui_destroy_container(container);
+		box = &context->boxs[i];
+		ui_destroy_box(box);
 		i++;
 	}
-	if (ctx->renderer)
-		SDL_DestroyRenderer(ctx->renderer);
-	if (ctx->window)
-		SDL_DestroyWindow(ctx->window);
+	if (context->renderer)
+		SDL_DestroyRenderer(context->renderer);
+	if (context->window)
+		SDL_DestroyWindow(context->window);
 }
 
 void	ui_destroy(t_core *core)
 {
-	t_ctx	*ctx;
+	t_context	*context;
 	int		i;
 
 	i = 0;
-	while (i < core->nb_ctxs)
+	while (i < core->nb_contexts)
 	{
-		ctx = &core->ctxs[i];
-		ui_destroy_ctx(ctx);
+		context = &core->contexts[i];
+		ui_destroy_context(context);
 		i++;
 	}
 	TTF_CloseFont(core->config.font);

@@ -6,66 +6,67 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2025/09/28 13:59:47 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 06:22:21 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui.h"
 
-void	init_ctx(t_core *core, t_ctx *ctx)
+void	init_context(t_core *core, t_context *context)
 {
-	*ctx = (t_ctx){0};
-	ctx->core = core;
-	ctx->config = &core->config;
-	ctx->is_durty = true;
+	*context = (t_context){0};
+	context->core = core;
+	context->is_durty = true;
 }
 
-t_ctx	*ui_create_tool_window(t_core *core, const char *title, SDL_Rect rect)
+t_context	*ui_create_basic_window(t_core *core, const char *title, SDL_Rect rect)
 {
-	t_ctx	*ctx;
-	int		index;
+	t_context	*context;
+	int			index;
 
-	index = core->nb_ctxs;
-	ctx = &core->ctxs[index];
-	init_ctx(core, ctx);
-	ctx->window = SDL_CreateWindow(title, rect.x, rect.y, rect.w, rect.h, SDL_WINDOW_RESIZABLE);
-    if (!ctx->window)
+	index = core->nb_contexts;
+	context = &core->contexts[index];
+	init_context(core, context);
+	context->rect = rect;
+	context->window = SDL_CreateWindow(title, rect.x, rect.y, rect.w, rect.h, SDL_WINDOW_SHOWN);
+    if (!context->window)
 	{
         fprintf(stderr, "SDL_CreateWindow error: %s\n", SDL_GetError());
         return (NULL);
     }
-    ctx->renderer = SDL_CreateRenderer(ctx->window, -1, SDL_RENDERER_ACCELERATED);
-    if (!ctx->renderer)
+    context->renderer = SDL_CreateRenderer(context->window, -1, SDL_RENDERER_ACCELERATED);
+    if (!context->renderer)
 	{
         fprintf(stderr, "SDL_CreateRenderer error: %s\n", SDL_GetError());
-        SDL_DestroyWindow(ctx->window);
+        SDL_DestroyWindow(context->window);
         return (NULL);
     }
-	core->nb_ctxs++;
-    return (ctx);
+	core->nb_contexts++;
+    return (context);
 }
 
-t_ctx	*ui_create_rendering_window(t_core *core, const char *title, SDL_Rect rect)
+t_context	*ui_create_rendering_window(t_core *core, const char *title, SDL_Rect rect)
 {
-	t_ctx	*ctx;
+	t_context	*context;
 	int		index;
 
-	index = core->nb_ctxs;
-	ctx = &core->ctxs[index];
-	init_ctx(core, ctx);
-	ctx->window = SDL_CreateWindow(title, rect.x, rect.y, rect.w, rect.h, SDL_WINDOW_RESIZABLE);
-    if (!ctx->window)
+	index = core->nb_contexts;
+	context = &core->contexts[index];
+	init_context(core, context);
+	context->rect = rect;
+	context->window = SDL_CreateWindow(title, rect.x, rect.y, rect.w, rect.h, SDL_WINDOW_RESIZABLE);
+    if (!context->window)
 	{
         fprintf(stderr, "SDL_CreateWindow error: %s\n", SDL_GetError());
         return (NULL);
     }
-    ctx->renderer = SDL_CreateRenderer(ctx->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-    if (!ctx->renderer)
+    context->renderer = SDL_CreateRenderer(context->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    if (!context->renderer)
 	{
         fprintf(stderr, "SDL_CreateRenderer error: %s\n", SDL_GetError());
-        SDL_DestroyWindow(ctx->window);
+        SDL_DestroyWindow(context->window);
         return (NULL);
     }
-	core->nb_ctxs++;
-    return (ctx);
+	core->nb_contexts++;
+    return (context);
 }

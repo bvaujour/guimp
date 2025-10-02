@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/09/30 19:24:09 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/02 07:45:20 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # define	UI_BLACK 						(SDL_Color){0, 0, 0, 255}
 # define	UI_WHITE 						(SDL_Color){255, 255, 255, 255}
 
-# define	UI_THEME1_CONTAINER_COLOR		(SDL_Color){60, 60, 60, 255}
+# define	UI_THEME1_BOX_COLOR				(SDL_Color){60, 60, 60, 255}
 # define	UI_THEME1_WINDOW_COLOR			(SDL_Color){90, 90, 90, 255}
 # define	UI_THEME1_BUTTON_DEFAULT_COLOR	(SDL_Color){150, 150, 150, 255}
 # define	UI_THEME1_BUTTON_HOVERED_COLOR	(SDL_Color){130, 130, 130, 255}
@@ -34,14 +34,14 @@
 
 # define	SCROLL_SPEED		5
 # define	MAX_WIDGET			30
-# define	MAX_CONTAINER		20
-# define	MAX_CTX				10
+# define	MAX_BOX				20
+# define	MAX_CONTEXT				10
 
 typedef enum	e_widget_type
 {
 	BUTTON,
 	SLIDER,
-	CONTAINER
+	BOX
 }				t_widget_type;
 
 typedef enum	e_button_state
@@ -53,10 +53,8 @@ typedef enum	e_button_state
 
 typedef enum	e_direction
 {
-	LEFTTORIGHT,
-	TOPTOBOTTOM,
-	RIGHTTOLEFT,
-	BOTTOMTOTOP,
+	HORIZONTAL,
+	VERTICAL,
 }				e_direction;
 
 typedef	struct	s_offset
@@ -72,7 +70,7 @@ typedef struct	s_config
 	TTF_Font		*font;
 	SDL_Color		font_color;
 	SDL_Color		window_color;
-	SDL_Color		container_color;
+	SDL_Color		box_color;
 	SDL_Color		button_color[3];
 }				t_config;
 
@@ -82,13 +80,14 @@ typedef struct	s_button_data
 {
 	SDL_Surface			*surfaces[3];
 	t_button_state		state;
-	void				(*binded_function)();
+	void				(*on_click)(void *param);
 	void				*param;
 }				t_button_data;
 
 struct s_core;
-struct s_container;
-struct s_ctx;
+struct s_box;
+struct s_context;
+struct s_widget;
 
 typedef struct	s_widget
 {
@@ -97,50 +96,50 @@ typedef struct	s_widget
 	SDL_Rect			relative;
 	t_widget_type		type;
 	t_button_data		button_data;
-	t_config			*config;
-	void				(*update)();
-	void				(*destroy)();
+	void				(*update)(struct s_widget *widget);
+	void				(*destroy)(struct s_widget *widget);
 	bool				is_durty;
-	struct s_container	*container;
-	struct s_ctx		*ctx;
+	struct s_box		*box;
+	struct s_context	*context;
 	struct s_core		*core;
 }				t_widget;
 
-typedef struct	s_container
+typedef struct	s_box
 {
-	SDL_Texture		*texture;
-	t_widget		widgets[MAX_WIDGET];
-	int				nb_widget;
-	SDL_Rect		rect;
-	e_direction		direction;
-	t_config		*config;
-	struct s_ctx	*ctx;
-	struct s_core	*core;
-	bool			is_durty;
-	SDL_Point		wheel_offset;
-	SDL_Point		max_scroll;
-	SDL_Rect		total_widget_rect;
-}				t_container;
+	SDL_Texture			*texture;
+	SDL_Rect			rect;
+	t_widget			widgets[MAX_WIDGET];
+	int					nb_widget;
+	e_direction			flex_direction;
+	int					flex;
+	struct s_context	*context;
+	struct s_core		*core;
+	bool				is_durty;
+	SDL_Point			scroll;
+	SDL_Point			max_scroll;
+	SDL_Rect			total_widget_rect;
+}				t_box;
 
-typedef struct	s_ctx
+typedef struct	s_context
 {
     SDL_Window		*window;
     SDL_Renderer	*renderer;
-	t_container		containers[MAX_CONTAINER];
-	int				nb_container;
-	t_config		*config;
+	SDL_Rect		rect;
+	t_box			boxs[MAX_BOX];
+	int				nb_box;
+	e_direction		flex_direction;
+	int				flex;
 	bool			is_visible;
 	bool			is_durty;
 	struct s_core	*core;
-}				t_ctx;
+}				t_context;
 
 typedef struct	s_core
 {
-	t_ctx			ctxs[MAX_CTX];
+	t_context		contexts[MAX_CONTEXT];
 	// bool			hotkeys[SDL_NUM_SCANCODES];
-	t_widget		*focused_widget;
-	t_container		*focused_container;
-	int				nb_ctxs;
+	int				nb_contexts;
+	e_direction		flex_direction;
 	SDL_Event		event;
 	bool			is_running;
 	int				screen_w;
@@ -174,17 +173,18 @@ void			ui_update(t_core *core);
 
 void			ui_render(t_core *core);
 
-t_ctx			*ui_create_tool_window(t_core *core, const char *title, SDL_Rect rect);
-t_ctx			*ui_create_rendering_window(t_core *core, const char *title, SDL_Rect rect);
-t_container		*ui_create_container(t_ctx *context, e_direction direction, SDL_Rect rect);
-t_widget		*ui_add_button(t_container *container, char *label, int font_size, t_offset padding);
+t_context		*ui_create_basic_window(t_core *core, const char *title, SDL_Rect rect);
+t_context		*ui_create_rendering_window(t_core *core, const char *title, SDL_Rect rect);
+t_box			*ui_create_box(t_context *context, e_direction direction, SDL_Rect rect);
+t_widget		*ui_add_button(t_box *box, char *label, int font_size, t_offset padding);
 
 void			ui_update_button(t_widget *widget);
 void			ui_destroy_button(t_widget *button);
 void			ui_bind_button(t_widget *button, void(*f)(), void *param);
 
-void			ui_rebuild_container(t_container *container);
-void			ui_build_container(t_container *container);
+void			ui_box_consume_scroll(t_box *box);
+
+void			ui_build_box(t_box *box);
 
 
 

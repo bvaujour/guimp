@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2025/09/29 10:34:26 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 06:18:52 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@ enum e_top_buttons
 
 typedef struct	s_data
 {
-	t_ctx		main_ctx;
+	t_context		main_context;
 	int			running;
 
 	t_core		core;
-	t_ctx		*rendering;
-	t_ctx		*tools;
-	t_container	*menubar;
+	t_context		*rendering;
+	t_context		*tools;
+	t_box	*menubar;
+	t_box	*tool_pallet;
+	t_box	*tool_options;
 	t_widget	*menubar_buttons[3];
 }				t_data;
 

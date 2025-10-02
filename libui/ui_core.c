@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_core.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/09/30 18:49:56 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/02 06:38:06 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	ui_base_config(t_core *core)
 		fprintf(stderr, "SDL_Init error: %s\n", TTF_GetError());
         return(-1);
 	}
-	core->config.container_color = UI_THEME1_CONTAINER_COLOR;
+	core->config.box_color = UI_THEME1_BOX_COLOR;
 	core->config.window_color = UI_THEME1_WINDOW_COLOR;
 	core->config.button_color[DEFAULT] = UI_THEME1_BUTTON_DEFAULT_COLOR;
 	core->config.button_color[HOVERED] = UI_THEME1_BUTTON_HOVERED_COLOR;
@@ -64,9 +64,9 @@ void	ui_run(t_core *core)
 	// SDL_StartTextInput();
 	// SDL_SetWindowModalFor();
 	// SDL_HideWindow();
-	// SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "info", "hello world\n re", core->ctxs[0].window);
-	// SDL_HideWindow(core->ctxs[2].window);
-	SDL_ShowWindow(core->ctxs[2].window);
+	// SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "info", "hello world\n re", core->contexts[0].window);
+	// SDL_HideWindow(core->contexts[2].window);
+	// SDL_ShowWindow(core->contexts[2].window);
 	while (core->is_running)
 	{
 		core->scrolled = false;
@@ -81,17 +81,18 @@ void	ui_run(t_core *core)
 			// }
 			if (core->event.type == SDL_KEYDOWN)
 			{
-				if (core->event.key.keysym.sym == SDLK_ESCAPE)
-				{
-					core->is_running = false;
-				}
 				if (core->event.key.keysym.sym == SDLK_LSHIFT)
 				{
+					printf("lshift\n");
 					core->lshift = true;
 				}
 			}
 			if (core->event.type == SDL_KEYUP)
 			{
+				if (core->event.key.keysym.sym == SDLK_ESCAPE)
+				{
+					core->is_running = false;
+				}
 				if (core->event.key.keysym.sym == SDLK_LSHIFT)
 				{
 					core->lshift = false;
@@ -126,7 +127,6 @@ void	ui_run(t_core *core)
 			}
 			else if (core->event.type == SDL_MOUSEWHEEL)
 			{
-				printf("core->event.wheel.x: %d\n", core->event.wheel.x);
 				if (core->lshift == true)
 					core->wheel.x = core->event.wheel.y;
 				else
