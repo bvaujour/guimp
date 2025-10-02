@@ -12,7 +12,7 @@
 
 #include "libui.h"
 
-void	ui_build_box(t_box *box)
+void	ui_build_box_texture(t_box *box)
 {
 	int			i;
 	SDL_Surface	*surface;
@@ -76,21 +76,23 @@ void	ui_box_consume_scroll(t_box *box)
 	printf("box->max_scroll.x: %d\n", box->max_scroll.x);
 }
 
-t_box	*ui_create_box(t_context *context, e_direction direction, SDL_Rect rect)
+t_box	*ui_create_box(t_context *context, int flex)
 {
 	t_box	*box;
-	int	index;
+	int		index;
 
 	index = context->nb_box;
 	box = &context->boxs[index];
 	*box = (t_box){0};
-	box->rect.x = rect.x;
-	box->rect.y = rect.y;
-	box->rect.w = rect.w;
-	box->rect.h = rect.h;
+	box->flex = flex;
+	box->gap = 10;
+	box->padding.left = 10;
+	box->padding.right = 10;
+	box->padding.top = 10;
+	box->padding.bottom = 10;
 	box->context = context;
 	box->core = context->core;
-	box->flex_direction = direction;
+	box->flex_direction = VERTICAL;
 	box->is_durty = true;
 	context->nb_box++;
 	return (box);

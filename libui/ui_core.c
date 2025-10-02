@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_core.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 06:38:06 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 14:54:59 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ int	ui_init(t_core *core)
 	return (0);
 }
 
-
-
 void	ui_run(t_core *core)
 {
 	// SDL_StartTextInput();
@@ -67,6 +65,7 @@ void	ui_run(t_core *core)
 	// SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "info", "hello world\n re", core->contexts[0].window);
 	// SDL_HideWindow(core->contexts[2].window);
 	// SDL_ShowWindow(core->contexts[2].window);
+	ui_build_everything(core);
 	while (core->is_running)
 	{
 		core->scrolled = false;

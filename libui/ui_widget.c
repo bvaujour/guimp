@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 13:17:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 07:46:12 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 16:37:43 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,10 @@ t_widget	*ui_add_button(t_box *box, char *label, int font_size, t_offset padding
 	button->core = box->core;
 	button->box = box;
 	button->context = box->context;
+	button->padding.left = 5;
+	button->padding.right = 5;
+	button->padding.top = 2;
+	button->padding.bottom = 2;
 	ui_build_button(button, label, font_size, padding);
 	if (box->flex_direction == VERTICAL)
 	{

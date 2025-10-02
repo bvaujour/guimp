@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_render.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:42:58 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 06:18:52 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 16:31:53 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,12 @@ static void	ui_render_context_elements(t_context *context)
 		box = &context->boxs[i];
 		if (box->is_durty)
 		{
-			ui_build_box(box);
+			ui_build_box_texture(box);
 			box->is_durty = false;
 		}
 		SDL_RenderCopy(context->renderer, box->texture, NULL, &box->rect);
+		SDL_SetRenderDrawColor(context->renderer, 0, 0, 0, 255);
+		SDL_RenderDrawRect(context->renderer, &box->rect);
 		i++;
 	}
 }

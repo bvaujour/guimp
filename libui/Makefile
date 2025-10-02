@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
+#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/10/02 06:18:52 by injah            ###   ########.fr        #
+#    Updated: 2025/10/02 14:53:57 by bvaujour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,10 @@ SRC =	ui_utils.c						\
 		ui_destroy.c					\
 		ui_surface.c					\
 		ui_widget.c						\
-		ui_box.c					\
+		ui_box.c						\
 		ui_render.c						\
 		ui_update.c						\
+		ui_build.c						\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 

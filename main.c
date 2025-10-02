@@ -30,16 +30,17 @@ int	main()
 	data = (t_data){0};
 	if (ui_init(&data.core) != 0)
 		quit(&data);
-	data.tools = ui_create_basic_window(&data.core, "tools", (SDL_Rect){0, 0, data.core.screen_w / 4, data.core.screen_h - 150});
+	data.tools = ui_create_basic_window(&data.core, "tools", 1);
 	if (!data.tools)
 		quit(&data);
-	data.rendering = ui_create_rendering_window(&data.core, "rendering",(SDL_Rect){data.core.screen_w / 4, 0, 3 * data.core.screen_w / 4, data.core.screen_h - 150});
+	data.rendering = ui_create_rendering_window(&data.core, "rendering", 3);
 	if (!data.rendering)
 		quit(&data);
-
-	data.menubar = ui_create_box(data.tools, HORIZONTAL, (SDL_Rect){10, 10, data.tools->rect.w - 20, 50});
-	// data.tool_pallet = ui_create_box(data.tools, VERTICAL, (SDL_Rect){10, 46, data.tools->rect.w - 20, data.tools->rect.h / 2 - 56});
-	data.tool_options = ui_create_box(data.tools, VERTICAL, (SDL_Rect){10, data.tools->rect.h / 2, data.tools->rect.w - 20, data.tools->rect.h / 2 - 10});
+	data.core.flex_direction = HORIZONTAL;
+	data.tools->flex_direction = VERTICAL;
+	data.menubar = ui_create_box(data.tools, 1);
+	data.tool_pallet = ui_create_box(data.tools, 4);
+	data.tool_options = ui_create_box(data.tools, 15);
 	data.menubar_buttons[FILE_BUTTON] = ui_add_button(data.menubar, "File", 18, MENUBAR_BUTTON_PADDING);
 	ui_bind_button(data.menubar_buttons[FILE_BUTTON], &test, &data);
 	data.menubar_buttons[EDIT_BUTTON] = ui_add_button(data.menubar, "Edit", 18, MENUBAR_BUTTON_PADDING);

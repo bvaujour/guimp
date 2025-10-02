@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/10/02 07:45:20 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/02 16:36:44 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 # define	SCROLL_SPEED		5
 # define	MAX_WIDGET			30
 # define	MAX_BOX				20
-# define	MAX_CONTEXT				10
+# define	MAX_CONTEXT			10
 
 typedef enum	e_widget_type
 {
@@ -91,47 +91,52 @@ struct s_widget;
 
 typedef struct	s_widget
 {
+	struct s_context	*context;
+	struct s_core		*core;
+	struct s_box		*box;
 	SDL_Surface			*surface;
 	SDL_Rect			rect;
 	SDL_Rect			relative;
+	t_offset			padding;
 	t_widget_type		type;
 	t_button_data		button_data;
 	void				(*update)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
 	bool				is_durty;
-	struct s_box		*box;
-	struct s_context	*context;
-	struct s_core		*core;
 }				t_widget;
 
 typedef struct	s_box
 {
+	struct s_context	*context;
+	struct s_core		*core;
 	SDL_Texture			*texture;
 	SDL_Rect			rect;
+	SDL_Point			scroll;
+	SDL_Point			max_scroll;
+	SDL_Rect			total_widget_rect;
+	t_offset			padding;
+	int					gap;
 	t_widget			widgets[MAX_WIDGET];
 	int					nb_widget;
 	e_direction			flex_direction;
 	int					flex;
-	struct s_context	*context;
-	struct s_core		*core;
 	bool				is_durty;
-	SDL_Point			scroll;
-	SDL_Point			max_scroll;
-	SDL_Rect			total_widget_rect;
 }				t_box;
 
 typedef struct	s_context
 {
+	struct s_core	*core;
     SDL_Window		*window;
     SDL_Renderer	*renderer;
 	SDL_Rect		rect;
+	t_offset		padding;
+	int				gap;
 	t_box			boxs[MAX_BOX];
 	int				nb_box;
 	e_direction		flex_direction;
 	int				flex;
 	bool			is_visible;
 	bool			is_durty;
-	struct s_core	*core;
 }				t_context;
 
 typedef struct	s_core
@@ -173,9 +178,9 @@ void			ui_update(t_core *core);
 
 void			ui_render(t_core *core);
 
-t_context		*ui_create_basic_window(t_core *core, const char *title, SDL_Rect rect);
-t_context		*ui_create_rendering_window(t_core *core, const char *title, SDL_Rect rect);
-t_box			*ui_create_box(t_context *context, e_direction direction, SDL_Rect rect);
+t_context		*ui_create_basic_window(t_core *core, const char *title, int flex);
+t_context		*ui_create_rendering_window(t_core *core, const char *title, int flex);
+t_box			*ui_create_box(t_context *context, int flex);
 t_widget		*ui_add_button(t_box *box, char *label, int font_size, t_offset padding);
 
 void			ui_update_button(t_widget *widget);
@@ -184,7 +189,8 @@ void			ui_bind_button(t_widget *button, void(*f)(), void *param);
 
 void			ui_box_consume_scroll(t_box *box);
 
-void			ui_build_box(t_box *box);
+void			ui_build_box_texture(t_box *box);
+void			ui_build_everything(t_core *core);
 
 
 
