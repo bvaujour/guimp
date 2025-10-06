@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_core.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 14:54:59 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/04 12:58:33 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,15 @@ void	ui_run(t_core *core)
 				else
 					core->wheel.y = core->event.wheel.y;
 				core->scrolled = true;
+			}
+			else if (core->event.type == SDL_WINDOWEVENT)
+			{
+				if (core->event.window.event == SDL_WINDOWEVENT_RESIZED)
+				{
+					printf("Fenêtre redimensionnée : %dx%d\n", core->event.window.data1, core->event.window.data2);
+					ui_build_windows(core);
+					
+				}
 			}
 			else if (core->event.type == SDL_QUIT)
 				core->is_running = false;

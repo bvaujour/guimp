@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:25:00 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 06:47:28 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/03 16:39:07 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,8 @@
 
 void	ui_destroy_button(t_widget *button)
 {
-	if (button->button_data.surfaces[DEFAULT])
-		SDL_FreeSurface(button->button_data.surfaces[DEFAULT]);
-	if (button->button_data.surfaces[HOVERED])
-		SDL_FreeSurface(button->button_data.surfaces[HOVERED]);
-	if (button->button_data.surfaces[CLICKED])
-		SDL_FreeSurface(button->button_data.surfaces[CLICKED]);
+	if (button->surface)
+		SDL_FreeSurface(button->surface);
 }
 
 static void	ui_destroy_box(t_box *box)

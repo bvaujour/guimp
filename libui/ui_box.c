@@ -16,15 +16,12 @@ void	ui_build_box_texture(t_box *box)
 {
 	int			i;
 	SDL_Surface	*surface;
-	t_widget	*widget;
 
 	i = 0;
 	surface = ui_new_surf(box->rect.w, box->rect.h, &box->core->config.box_color);
 	while (i < box->nb_widget)
 	{
-		widget = &box->widgets[i];
-		// SDL_BlitScaled(widget->surface, NULL, surface, &(SDL_Rect){widget->relative.x, widget->relative.y, widget->rect.w, box->rect.h});
-		ui_blit(widget->surface, surface, widget->relative.x, widget->relative.y);
+		ui_blit(box->widgets[i].surface, surface, box->widgets[i].relative.x, box->widgets[i].relative.y);
 		i++;
 	}
 	if (box->texture)
@@ -32,6 +29,8 @@ void	ui_build_box_texture(t_box *box)
 	box->texture = SDL_CreateTextureFromSurface(box->context->renderer, surface);
 	SDL_FreeSurface(surface);
 }
+
+
 
 void	ui_box_consume_scroll(t_box *box)
 {
@@ -66,8 +65,6 @@ void	ui_box_consume_scroll(t_box *box)
 		widget = &box->widgets[i];
 		widget->relative.x += box->core->wheel.x * SCROLL_SPEED;
 		widget->relative.y += box->core->wheel.y * SCROLL_SPEED;
-		widget->rect.x = box->rect.x + widget->relative.x;
-		widget->rect.y = box->rect.y + widget->relative.y;
 		i++;
 	}
 	printf("\nbox->scroll.y: %d\n", box->scroll.y);
@@ -85,15 +82,14 @@ t_box	*ui_create_box(t_context *context, int flex)
 	box = &context->boxs[index];
 	*box = (t_box){0};
 	box->flex = flex;
-	box->gap = 10;
-	box->padding.left = 10;
-	box->padding.right = 10;
-	box->padding.top = 10;
-	box->padding.bottom = 10;
+	box->gap = 2;
+	box->padding.left = 2;
+	box->padding.right = 2;
+	box->padding.top = 2;
+	box->padding.bottom = 2;
 	box->context = context;
 	box->core = context->core;
 	box->flex_direction = VERTICAL;
-	box->is_durty = true;
 	context->nb_box++;
 	return (box);
 }

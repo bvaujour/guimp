@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 08:24:54 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 06:34:45 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/04 13:06:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 
 void	ui_fill_surf(SDL_Surface *surface, SDL_Color color)
 {
-	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
+	if (SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a)) != 0)
+	{
+		fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
+		return ;
+	}
 }
 
 SDL_Surface	*ui_copy_surface(SDL_Surface *surface)
@@ -45,6 +49,11 @@ SDL_Surface* ui_new_surf(int width, int height, SDL_Color *color)
 	SDL_Surface*	surface;
 
 	surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+	if (surface == NULL)
+	{
+		fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
+        return (NULL);
+	}
 	if (color != NULL)
 		ui_fill_surf(surface, *color);
 	return (surface);

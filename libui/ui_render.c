@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_render.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:42:58 by injah             #+#    #+#             */
-/*   Updated: 2025/10/02 16:31:53 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/04 12:22:37 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,14 @@
 
 static void	ui_render_context_elements(t_context *context)
 {
-	t_box	*box;
 	int			i;
 	
 	i = 0;
 	while (i < context->nb_box)
 	{
-		box = &context->boxs[i];
-		if (box->is_durty)
-		{
-			ui_build_box_texture(box);
-			box->is_durty = false;
-		}
-		SDL_RenderCopy(context->renderer, box->texture, NULL, &box->rect);
+		SDL_RenderCopy(context->renderer, context->boxs[i].texture, NULL, &context->boxs[i].rect);
 		SDL_SetRenderDrawColor(context->renderer, 0, 0, 0, 255);
-		SDL_RenderDrawRect(context->renderer, &box->rect);
+		SDL_RenderDrawRect(context->renderer, &context->boxs[i].rect);
 		i++;
 	}
 }
@@ -76,19 +69,17 @@ static void	ui_render_context(t_context *context)
 
 void	ui_render(t_core *core)
 {
-	t_context	*context;
 	int 	i;
 
 	i = 0;
 	while (i < core->nb_contexts)
 	{
-		context = &core->contexts[i];
-		if (context->is_durty)
+		if (core->contexts[i].is_durty)
 		{
-			ui_render_context(context);
-			ui_render_context_elements(context);	
-			SDL_RenderPresent(context->renderer);
-			context->is_durty = false;
+			ui_render_context(&core->contexts[i]);
+			ui_render_context_elements(&core->contexts[i]);	
+			SDL_RenderPresent(core->contexts[i].renderer);
+			core->contexts[i].is_durty = false;
 		}
 		i++;
 	}

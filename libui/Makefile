@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
+#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/10/02 14:53:57 by bvaujour         ###   ########.fr        #
+#    Updated: 2025/10/03 12:54:29 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRC =	ui_utils.c						\
 		ui_core.c						\
 		ui_destroy.c					\
 		ui_surface.c					\
-		ui_widget.c						\
+		ui_button.c						\
 		ui_box.c						\
 		ui_render.c						\
 		ui_update.c						\
