@@ -3,22 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   ui_update.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 18:41:16 by injah             #+#    #+#             */
-/*   Updated: 2025/10/04 13:42:29 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/07 15:54:50 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui.h"
 
-void	ui_change_button_state(t_widget *button, t_button_state state)
+void	ui_change_button_state(t_widget *button, e_button_state state)
 {
 	if (button->button_data.state != state)
 	{
 		button->button_data.state = state;
 		ui_refresh_button_surface(button);
-		button->context->is_durty = true;
 	}
 }
 
@@ -51,17 +50,13 @@ void	ui_update_box(t_box *box)
 
 	i = 0;
 	if (box->core->scrolled && SDL_PointInRect(&box->core->mouse, &box->rect))
-	{
 		ui_box_consume_scroll(box);
-		box->context->is_durty = true;
-	}
 	while (i < box->nb_widget)
 	{
 		box->widgets[i].update(&box->widgets[i]);
 		i++;
 	}
-	if (box->context->is_durty)
-		ui_build_box_texture(box);
+	ui_build_box_texture(box);
 }
 
 void	ui_update_context(t_context *context)

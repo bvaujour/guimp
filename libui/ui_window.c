@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_window.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2025/10/03 16:24:06 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/07 16:44:48 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,14 @@ void	init_context(t_core *core, t_context *context, int flex)
 {
 	*context = (t_context){0};
 	context->core = core;
-	context->is_durty = true;
 	context->flex = flex;
 	context->padding.left = 10;
 	context->padding.right = 10;
 	context->padding.top = 10;
 	context->padding.bottom = 10;
 	context->gap = 10;
+	context->flex_direction = VERTICAL;
+	core->total_contexts_flex += flex;
 }
 
 t_context	*ui_create_basic_window(t_core *core, const char *title, int flex)

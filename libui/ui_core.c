@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_core.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/04 12:58:33 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/07 11:18:21 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static int	ui_base_config(t_core *core)
 {
+	*core = (t_core){0};
+	ui_get_screen_size(&core->screen_w, &core->screen_h);
 	core->config.font = TTF_OpenFont(UI_THEME1_FONT, 15);
 	if (!core->config.font)
 	{
@@ -25,6 +27,7 @@ static int	ui_base_config(t_core *core)
 	core->config.button_color[DEFAULT] = UI_THEME1_BUTTON_DEFAULT_COLOR;
 	core->config.button_color[HOVERED] = UI_THEME1_BUTTON_HOVERED_COLOR;
 	core->config.button_color[CLICKED] = UI_THEME1_BUTTON_CLICKED_COLOR;
+	core->is_running = true;
 	return (0);
 }
 
@@ -32,12 +35,10 @@ int	ui_init(t_core *core)
 {
 	int img_flags;
 	
-	*core = (t_core){0};
-	core->is_running = true;
 	img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-        fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
+		fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
         return (1);
     }
 	if (TTF_Init() != 0)
@@ -51,7 +52,6 @@ int	ui_init(t_core *core)
 		return (3);
 	}
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	ui_get_screen_size(&core->screen_w, &core->screen_h);
 	if (ui_base_config(core) != 0)
 		return (4);
 	return (0);
@@ -66,6 +66,8 @@ void	ui_run(t_core *core)
 	// SDL_HideWindow(core->contexts[2].window);
 	// SDL_ShowWindow(core->contexts[2].window);
 	ui_build_everything(core);
+	ui_render(core);
+
 	while (core->is_running)
 	{
 		core->scrolled = false;

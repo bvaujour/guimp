@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 13:17:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/06 17:03:43 by injah            ###   ########.fr       */
+/*   Updated: 2025/10/07 15:51:48 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui.h"
 
-void		ui_adjust_font_size(char *label, TTF_Font *font, SDL_Rect rect)
+int		ui_adjust_font_size(char *label, TTF_Font *font, SDL_Rect rect)
 {
 	int	txt_width;
 	int	txt_height;
@@ -29,13 +29,15 @@ void		ui_adjust_font_size(char *label, TTF_Font *font, SDL_Rect rect)
 	}
 	font_size--;
 	TTF_SetFontSize(font, font_size);
+	return (font_size);
 }
 
 void	ui_build_button(t_widget *button)
 {
 	SDL_Surface	*txt_surf;
 
-	ui_adjust_font_size(button->button_data.label, button->core->config.font, button->relative);
+	button->button_data.font_size = ui_adjust_font_size(button->button_data.label, button->core->config.font, button->relative);
+	TTF_SetFontSize(button->core->config.font, button->button_data.font_size);
 	txt_surf = TTF_RenderText_Blended(button->core->config.font, button->button_data.label, UI_WHITE);
 	if (button->surface)
 		SDL_FreeSurface(button->surface);
@@ -48,6 +50,7 @@ void	ui_refresh_button_surface(t_widget *button)
 {
 	SDL_Surface		*txt_surf;
 
+	TTF_SetFontSize(button->core->config.font, button->button_data.font_size);
 	txt_surf = TTF_RenderText_Blended(button->core->config.font, button->button_data.label, UI_WHITE);
 	ui_fill_surf(button->surface, button->core->config.button_color[button->button_data.state]);
 	ui_blit_centered(txt_surf, button->surface);

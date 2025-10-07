@@ -38,28 +38,12 @@ void	ui_box_consume_scroll(t_box *box)
 	t_widget	*widget;
 
 	i = 0;
+	if (box->scroll.y + box->core->wheel.y * SCROLL_SPEED > 0 || box->scroll.y + box->core->wheel.y * SCROLL_SPEED < box->max_scroll.y)
+		return ;
+	if (box->scroll.x + box->core->wheel.x * SCROLL_SPEED > 0 || box->scroll.x + box->core->wheel.x * SCROLL_SPEED < box->max_scroll.x)
+		return ;
 	box->scroll.x += box->core->wheel.x * SCROLL_SPEED;
 	box->scroll.y += box->core->wheel.y * SCROLL_SPEED;
-	if (box->scroll.y > 0)
-	{
-		box->scroll.y = 0;
-		return ;
-	}
-	else if (box->scroll.y < box->max_scroll.y)
-	{
-		box->scroll.y = box->max_scroll.y;
-		return ;
-	}
-	if (box->scroll.x > 0)
-	{
-		box->scroll.x = 0;
-		return ;
-	}
-	else if (box->scroll.x < box->max_scroll.x)
-	{
-		box->scroll.x = box->max_scroll.x;
-		return ;
-	}
 	while (i < box->nb_widget)
 	{
 		widget = &box->widgets[i];
@@ -73,7 +57,97 @@ void	ui_box_consume_scroll(t_box *box)
 	printf("box->max_scroll.x: %d\n", box->max_scroll.x);
 }
 
-t_box	*ui_create_box(t_context *context, int flex)
+void	ui_build_horizontal_box(t_box *box)
+{
+	int	i;
+	SDL_Rect	widget_rect;
+	int			nb_line;
+
+	i = 0;
+	widget_rect = (SDL_Rect){0};
+	if (box->max_widgets_per_line != -1)
+		nb_line = (box->nb_widget - 1) / box->max_widgets_per_line + 1;
+	else
+		nb_line = 1;
+	widget_rect.w = (box->rect.w - box->padding.left - box->padding.right - box->gap * (box->nb_printed_widget_before_scroll - 1)) / box->nb_printed_widget_before_scroll;
+	widget_rect.h = (box->rect.h - box->padding.top - box->padding.bottom - box->gap * (nb_line - 1)) / nb_line;
+	widget_rect.x = box->padding.left;
+	widget_rect.y = box->padding.top;
+	if (box->nb_widget == 0)
+		return ;
+	while (i < box->nb_widget)
+	{
+		box->widgets[i].relative = widget_rect;
+		box->widgets[i].build(&box->widgets[i]);
+		widget_rect.x += widget_rect.w + box->gap;
+		if (box->max_widgets_per_line != -1 && (i + 1) % box->max_widgets_per_line == 0)
+		{
+			widget_rect.y += widget_rect.h + box->gap;
+			widget_rect.x = box->padding.left;
+		}
+		i++;
+	}
+	if (box->nb_widget > box->nb_printed_widget_before_scroll)
+	{
+		if (box->nb_widget < box->max_widgets_per_line)
+			box->max_scroll.x = box->rect.w - (widget_rect.w * box->nb_widget + box->gap * (box->nb_widget - 1) + box->padding.left + box->padding.right);
+		else
+			box->max_scroll.x = box->rect.w - (widget_rect.w * box->max_widgets_per_line + box->gap * (box->max_widgets_per_line - 1) + box->padding.left + box->padding.right);
+	}
+}
+
+void	ui_build_vertical_box(t_box *box)
+{
+	int	i;
+	SDL_Rect	widget_rect;
+	int			nb_line;
+
+	i = 0;
+	widget_rect = (SDL_Rect){0};
+	if (box->max_widgets_per_line != -1)
+		nb_line = (box->nb_widget - 1) / box->max_widgets_per_line + 1;
+	else
+		nb_line = 1;
+	widget_rect.w = (box->rect.w - box->padding.left - box->padding.right - box->gap * (nb_line - 1)) / nb_line;
+	widget_rect.h = (box->rect.h - box->padding.top - box->padding.bottom - box->gap * (box->nb_printed_widget_before_scroll - 1)) / box->nb_printed_widget_before_scroll;
+	widget_rect.x = box->padding.left;
+	widget_rect.y = box->padding.top;
+	printf("widget h: %d\n", widget_rect.h);
+	if (box->nb_widget == 0)
+		return ;
+	while (i < box->nb_widget)
+	{
+		box->widgets[i].relative = widget_rect;
+		box->widgets[i].build(&box->widgets[i]);
+		widget_rect.y += widget_rect.h + box->gap;
+		if (box->max_widgets_per_line != -1 && (i + 1) % box->max_widgets_per_line == 0)
+		{
+			widget_rect.x += widget_rect.w + box->gap;
+			widget_rect.y = box->padding.left;
+		}
+		i++;
+	}
+	if (box->nb_widget > box->nb_printed_widget_before_scroll)
+	{
+		if (box->nb_widget < box->max_widgets_per_line)
+			box->max_scroll.y = box->rect.h - (widget_rect.h * box->nb_widget + box->gap * (box->nb_widget - 1) + box->padding.top + box->padding.bottom);
+		else
+			box->max_scroll.y = box->rect.h - (widget_rect.h * box->max_widgets_per_line + box->gap * (box->max_widgets_per_line - 1) + box->padding.top + box->padding.bottom);
+	}
+}
+
+void	ui_init_box(t_box *box)
+{
+	box->gap = 2;
+	box->padding.left = 2;
+	box->padding.right = 2;
+	box->padding.top = 2;
+	box->padding.bottom = 2;
+	box->nb_printed_widget_before_scroll = 5;
+	box->max_widgets_per_line = -1;
+}
+
+t_box	*ui_create_horizontal_box(t_context *context, int flex)
 {
 	t_box	*box;
 	int		index;
@@ -82,14 +156,29 @@ t_box	*ui_create_box(t_context *context, int flex)
 	box = &context->boxs[index];
 	*box = (t_box){0};
 	box->flex = flex;
-	box->gap = 2;
-	box->padding.left = 2;
-	box->padding.right = 2;
-	box->padding.top = 2;
-	box->padding.bottom = 2;
+	ui_init_box(box);
+	box->build = &ui_build_horizontal_box;
 	box->context = context;
 	box->core = context->core;
-	box->flex_direction = VERTICAL;
+	context->total_boxs_flex += flex;
+	context->nb_box++;
+	return (box);
+}
+
+t_box	*ui_create_vertical_box(t_context *context, int flex)
+{
+	t_box	*box;
+	int		index;
+
+	index = context->nb_box;
+	box = &context->boxs[index];
+	*box = (t_box){0};
+	box->flex = flex;
+	ui_init_box(box);
+	box->build = &ui_build_vertical_box;
+	box->context = context;
+	box->core = context->core;
+	context->total_boxs_flex += flex;
 	context->nb_box++;
 	return (box);
 }
