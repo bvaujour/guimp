@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 14:19:36 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/10/07 16:27:00 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/09 16:08:43 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,29 +87,6 @@ void	ui_place_boxs_horizontally(t_context *context)
 		box_rect.x += box_rect.w + context->gap;
 		i++;
 	}
-}
-
-void	ui_calculate_max_horizontal_scroll(t_box *box)
-{
-	int			i;
-	SDL_Rect	total_widget_rect;
-
-	i = 0;
-	total_widget_rect = (SDL_Rect){0};
-	while (i < box->nb_widget)
-	{
-		total_widget_rect.w += box->widgets[i].relative.w;
-		if (total_widget_rect.h < box->widgets[i].relative.h)
-			total_widget_rect.h = box->widgets[i].relative.h;
-		i++;
-	}
-	box->max_scroll.x = box->rect.w - total_widget_rect.w;
-	if (box->max_scroll.x > 0)
-		box->max_scroll.x = 0;
-	box->max_scroll.y = box->rect.h - total_widget_rect.h;
-	if (box->max_scroll.y > 0)
-		box->max_scroll.y = 0;
-		
 }
 
 void	ui_build_boxs(t_context *context)

@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 13:17:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/07 15:51:48 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:57:21 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,14 @@ void	ui_bind_button(t_widget *button, void(*f)(), void *param)
 	button->button_data.param = param;
 }
 
-t_widget	*ui_add_button(t_box *box, char *label)
+t_widget	*ui_create_button(t_box *box, char *label)
 {
 	t_widget	*button;
 	int			index;
 
 	index = box->nb_widget;
+	if (index == MAX_WIDGET)
+		return (NULL);
 	button = &box->widgets[index];
 	*button = (t_widget){0};
 	button->type = BUTTON;

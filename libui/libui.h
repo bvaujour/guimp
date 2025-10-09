@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/10/07 15:54:28 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/09 16:31:08 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@
 # define	UI_THEME1_FONT					"libui/fonts/Roboto/Roboto_Condensed-Black.ttf"
 
 # define	SCROLL_SPEED		5
-# define	MAX_WIDGET			30
-# define	MAX_BOX				20
-# define	MAX_CONTEXT			10
+# define	MAX_WIDGET			50
+# define	MAX_BOX				10
+# define	MAX_CONTEXT			5
 
 typedef			enum e_widget_type
 {
@@ -105,8 +105,8 @@ typedef struct	s_box
 	SDL_Rect			rect;
 	SDL_Point			scroll;
 	SDL_Point			max_scroll;
-	int					nb_printed_widget_before_scroll;
-	int					max_widgets_per_line;
+	int					inner_elements;
+	int					wrap_at;
 	e_direction			direction;
 	t_side				padding;
 	int					gap;
@@ -175,8 +175,13 @@ t_context		*ui_create_basic_window(t_core *core, const char *title, int flex);
 t_context		*ui_create_rendering_window(t_core *core, const char *title, int flex);
 t_box			*ui_create_vertical_box(t_context *context, int flex);
 t_box			*ui_create_horizontal_box(t_context *context, int flex);
-t_box			*ui_create_scroll_vertical_box(t_context *context, int flex, int max_printed_widgets);
-t_box			*ui_create_scroll_horizontal_box(t_context *context, int flex, int max_printed_widgets);
+void			ui_box_set_wrap_elements(t_box *box, int wrap_at);
+void			ui_box_set_inner_elements(t_box *box, int inner_elements);
+void			ui_box_set_padding(t_box *box, int padding_left, int padding_top, int padding_right, int padding_bottom);
+void			ui_box_set_gap(t_box *box, int gap);
+
+
+
 
 
 void			ui_update_button(t_widget *widget);
@@ -192,7 +197,7 @@ void			ui_build_windows(t_core *core);
 // void			ui_build_button(t_widget *button);
 void			ui_refresh_button_surface(t_widget *button);
 void			ui_build_button(t_widget *button);
-t_widget		*ui_add_button(t_box *box, char *label);
+t_widget		*ui_create_button(t_box *box, char *label);
 
 
 

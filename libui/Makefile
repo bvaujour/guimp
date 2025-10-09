@@ -6,7 +6,7 @@
 #    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/10/07 10:47:56 by bvaujour         ###   ########.fr        #
+#    Updated: 2025/10/09 16:03:27 by bvaujour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRC =	ui_utils.c						\
 		ui_surface.c					\
 		ui_button.c						\
 		ui_box.c						\
+		ui_box_settings.c				\
 		ui_render.c						\
 		ui_update.c						\
 		ui_build.c						\
