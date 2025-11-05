@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/10/09 16:37:15 by bvaujour         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:27:31 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ void	create_boxs(t_data *data)
 {
 	data->menubar = ui_create_horizontal_box(data->tools_window, 3);
 	ui_box_set_inner_elements(data->menubar, 5);
-	data->tool_pallet = ui_create_horizontal_box(data->tools_window, 20);
+	data->tool_pallet = ui_create_horizontal_box(data->tools_window, 27);
 	ui_box_set_inner_elements(data->tool_pallet, 3);
-	ui_box_set_wrap_elements(data->tool_pallet, 3);
+	ui_box_set_wrap_elements(data->tool_pallet, 5);
 	ui_box_set_padding(data->tool_pallet, 5, 10, 5, 10);
 	ui_box_set_gap(data->tool_pallet, 10);
-	data->tool_options = ui_create_vertical_box(data->tools_window, 77);
+	data->tool_options = ui_create_vertical_box(data->tools_window, 70);
 	
 	data->render = ui_create_horizontal_box(data->rendering_window, 1);
 }
@@ -70,9 +70,6 @@ int	main()
 	fill_menu_bar(&data);
 	
 
-	ui_create_button(data.tool_pallet, "TEST");
-	ui_create_button(data.tool_pallet, "TEST");
-	ui_create_button(data.tool_pallet, "TEST");
 	ui_create_button(data.tool_pallet, "TEST");
 	ui_create_button(data.tool_pallet, "TEST");
 	ui_create_button(data.tool_pallet, "TEST");

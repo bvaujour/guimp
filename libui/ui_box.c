@@ -143,7 +143,7 @@ void	ui_init_box(t_box *box)
 	box->wrap_at = 100;
 	box->inner_elements = -1;
 }
-
+/*horizontal*/
 t_box	*ui_create_horizontal_box(t_context *context, int flex)
 {
 	t_box	*box;
