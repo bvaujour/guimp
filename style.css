@@ -1,0 +1,57 @@
+
+
+
+/*
+** Guimp — interface theme
+**
+** Color format:  #RRGGBB        (alpha defaults to FF)
+**                #AARRGGBB      (explicit alpha, hex)
+**
+** Supported properties per selector:
+**   color        — normal state background
+**   hover-color  — hovered state background
+**   click-color  — clicked state background
+**   fill-color   — slider fill bar  (slider only)
+**   outline      — border thickness in pixels  (0 = none)
+**
+** Selectors: button  box  window  slider  text
+*/
+
+window {
+    background-color: #1a1a2e;
+}
+
+button {
+    background-color: #16213e;
+    hover-color: #116cdb;
+    click-color: #533483;
+    outline:     10;
+}
+
+box {
+    color:   #12f30a25;
+    outline: 15;
+}
+
+slider {
+    color:      #ffffff;
+    fill-color: #f5e509;
+    spacing :    5;
+    outline:    2;
+}
+
+text {
+    color: #0a0000ee;
+}
+
+canvas {
+    background-color: #ffffffff;
+}
+
+color {
+    r: 255;
+    g: 100;
+    b: 50;
+    a: 255;
+    brightness: 0.8;
+}

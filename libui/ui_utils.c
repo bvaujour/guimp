@@ -5,28 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 12:55:51 by injah             #+#    #+#             */
-/*   Updated: 2025/09/23 10:10:44 by injah            ###   ########.fr       */
+/*   Created: 2025/12/14 17:57:41 by injah             #+#    #+#             */
+/*   Updated: 2026/04/30 17:43:02 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libui.h"
+#include "libui_int.h"
 
-void	ui_get_screen_size(int *width, int *height)
+SDL_Color	ui_unpack_color(unsigned int color)
 {
-	SDL_DisplayMode mode;
+	SDL_Color	argb_color;
 
-	if (SDL_GetCurrentDisplayMode(0, &mode) == 0)
-		printf("Résolution courante: %dx%d\n", mode.w, mode.h);
-	if (width)
-		*width = mode.w;
-	if (height)
-		*height = mode.h;
+	argb_color.a = (color >> 24) & 0xFF;
+	argb_color.r = (color >> 16) & 0xFF;
+	argb_color.g = (color >> 8) & 0xFF;
+	argb_color.b = color & 0xFF;
+	return (argb_color);
 }
 
-void	ui_get_sdl_version()
+SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod)
 {
-	SDL_version vs;
-	SDL_VERSION(&vs);
-	printf("%d.%d.%d\n", vs.major, vs.minor, vs.patch);
+	SDL_Texture		*texture;
+	SDL_Surface		*surface;
+
+	surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_ARGB8888);
+	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureColorMod(texture, color_mod.r, color_mod.g, color_mod.b);
+	SDL_SetTextureAlphaMod(texture, color_mod.a);
+	SDL_FreeSurface(surface);
+	return (texture);
+}
+
+
+
+TTF_Font	*ui_open_font_match_size(const char *font_path, const char *text, int width, int height)
+{
+	TTF_Font	*font;
+	int			i;
+	int			current_width;
+
+	i = height;
+	font = TTF_OpenFont(font_path, height);
+	while (i > 1)
+	{
+		TTF_SetFontSize(font, i);
+		TTF_SizeUTF8(font, text, &current_width, NULL);
+		if (current_width < width)
+			break ;
+		i -= 2;
+	}
+	return (font);
+}
+
+TTF_Font	*ui_open_font_match_height(const char *font_path, const char *text, int height)
+{
+	TTF_Font	*font;
+	int			i;
+	int			current_width;
+	int			current_height;
+
+	i = 0;
+	while (1)
+	{
+		font = TTF_OpenFont(font_path, i);
+		TTF_SizeUTF8(font, text, &current_width, &current_height);
+		TTF_CloseFont(font);
+		if (current_height > height)
+			break ;
+		i++;
+	}
+	if (i == 0)
+		i = 1;
+	font = TTF_OpenFont(font_path, i - 1);
+	return (font);
+}
+
+SDL_Texture	*ui_create_str_texture(SDL_Renderer *renderer, const char *str, TTF_Font *font, int font_size, int wrap_length)
+{
+	SDL_Surface *surface;
+	SDL_Texture	*texture;
+
+	TTF_SetFontSize(font, font_size);
+	surface = TTF_RenderText_Blended_Wrapped(font, str, (SDL_Color){255, 255, 255, 255}, wrap_length);
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+	return (texture);
 }

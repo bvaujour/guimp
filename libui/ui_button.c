@@ -3,86 +3,116 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/23 13:17:08 by injah             #+#    #+#             */
-/*   Updated: 2025/10/09 15:57:21 by bvaujour         ###   ########.fr       */
+/*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
+/*   Updated: 2026/05/05 16:14:48 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libui.h"
+#include "libui_int.h"
 
-int		ui_adjust_font_size(char *label, TTF_Font *font, SDL_Rect rect)
+static void	ui_button_destroy(t_widget *button)
 {
-	int	txt_width;
-	int	txt_height;
-	int	font_size;
+	(void)button;
+}
 
-	font_size = 1;
-	TTF_SetFontSize(font, font_size);
-	TTF_SizeText(font, label, &txt_width, &txt_height);
-	while (txt_width < rect.w && txt_height < rect.h)
+static void	ui_button_event(t_widget *button)
+{
+	SDL_Point	absolute;
+
+	if (button->core->event.type == SDL_MOUSEBUTTONDOWN)
 	{
-		font_size++;
-		TTF_SetFontSize(font, font_size);
-		TTF_SizeText(font, label, &txt_width, &txt_height);
+		button->core->focused_widget = button;
+		absolute = ui_get_absolute_position(button);
+		ui_widget_call_onclicked(button->core, button, button->core->mouse.position.x - absolute.x, button->core->mouse.position.y - absolute.y, button->core->event.button.button);
 	}
-	font_size--;
-	TTF_SetFontSize(font, font_size);
-	return (font_size);
-}
-
-void	ui_build_button(t_widget *button)
-{
-	SDL_Surface	*txt_surf;
-
-	button->button_data.font_size = ui_adjust_font_size(button->button_data.label, button->core->config.font, button->relative);
-	TTF_SetFontSize(button->core->config.font, button->button_data.font_size);
-	txt_surf = TTF_RenderText_Blended(button->core->config.font, button->button_data.label, UI_WHITE);
-	if (button->surface)
-		SDL_FreeSurface(button->surface);
-	button->surface = ui_new_surf(button->relative.w, button->relative.h, &button->core->config.button_color[DEFAULT]);
-	ui_blit_centered(txt_surf, button->surface);
-	SDL_FreeSurface(txt_surf);
-}
-
-void	ui_refresh_button_surface(t_widget *button)
-{
-	SDL_Surface		*txt_surf;
-
-	TTF_SetFontSize(button->core->config.font, button->button_data.font_size);
-	txt_surf = TTF_RenderText_Blended(button->core->config.font, button->button_data.label, UI_WHITE);
-	ui_fill_surf(button->surface, button->core->config.button_color[button->button_data.state]);
-	ui_blit_centered(txt_surf, button->surface);
-	SDL_FreeSurface(txt_surf);
-}
-
-void	ui_bind_button(t_widget *button, void(*f)(), void *param)
-{
-	button->button_data.on_click = f;
-	button->button_data.param = param;
-}
-
-t_widget	*ui_create_button(t_box *box, char *label)
-{
-	t_widget	*button;
-	int			index;
-
-	index = box->nb_widget;
-	if (index == MAX_WIDGET)
-		return (NULL);
-	button = &box->widgets[index];
-	*button = (t_widget){0};
-	button->type = BUTTON;
+	else if (button->core->event.type == SDL_MOUSEBUTTONUP)
+	{
+		absolute = ui_get_absolute_position(button);
+		ui_widget_call_onreleased(button->core, button, button->core->mouse.position.x - absolute.x, button->core->mouse.position.y - absolute.y, button->core->event.button.button);
+	}
 	
-	button->button_data.state = DEFAULT;
-	button->button_data.label = label;
-	button->build = &ui_build_button;
-	button->update = &ui_update_button;
-	button->destroy = &ui_destroy_button;
-	button->core = box->core;
-	button->box = box;
-	button->context = box->context;
-	box->nb_widget++;
+}
+
+static void	ui_button_update(t_widget *button)
+{
+	SDL_Point	absolute;
+
+	if (button->core->event.type == SDL_KEYDOWN)
+	{
+		if (button->core->event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+		{
+			absolute = ui_get_absolute_position(button);
+			ui_widget_call_onclicked(button->core, button, button->core->mouse.position.x - absolute.x, button->core->mouse.position.y - absolute.y, 1);
+		}
+	}
+}
+
+// static void	ui_button_onunhovered(t_widget *button)
+// {
+// 	ui_widget_change_state(button, NORMAL);
+// }
+
+bool	ui_button_get_onoff_state(t_widget *button)
+{
+	if (button->type != ONOFF_BUTTON)
+		return (false);
+	return (button->is_on);
+}
+
+t_widget	*ui_create_button(t_widget *parent, t_rect	relative_rect)
+{
+	t_widget			*button;
+	t_button_data		*data;
+
+	if (parent == NULL)
+		return (NULL);
+	button = ui_new_widget(parent, (SDL_Rect){relative_rect.x, relative_rect.y, relative_rect.width, relative_rect.height}, BUTTON, UI_MAX_BUTTON_CHILDS);
+	if (!button)
+		return (ui_destroy_widget(button), NULL);
+	button->data = malloc(sizeof(t_button_data));
+	if (!button->data)
+		return (ui_destroy_widget(button), NULL);
+	data = (t_button_data *)button->data;
+	*data = (t_button_data){0};
+	ft_strcpy(button->name, "button");
+	ui_set_widget_colors(button, 0xFF6F6F6F, 0xFF7F7F7F, 0xFF8F8F8F);
+	button->cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+	button->render = ui_widget_basic_render;
+	button->destroy = ui_button_destroy;
+	button->event = ui_button_event;
+	button->update = ui_button_update;
+	button->texture = ui_new_texture(parent->renderer, 32, 32, button->colors[button->state]);
+	if (ui_add_child(parent, button) != UI_SUCCESS)
+		return (ui_destroy_widget(button), NULL);
+	return (button);
+}
+
+t_widget	*ui_create_onoff_button(t_widget *parent, t_rect relative_rect)
+{
+	t_widget			*button;
+	t_button_data		*data;
+
+	if (parent == NULL)
+		return (NULL);
+	button = ui_new_widget(parent, (SDL_Rect){relative_rect.x, relative_rect.y, relative_rect.width, relative_rect.height}, ONOFF_BUTTON, UI_MAX_BUTTON_CHILDS);
+	if (!button)
+		return (ui_destroy_widget(button), NULL);
+	button->data = malloc(sizeof(t_button_data));
+	if (!button->data)
+		return (ui_destroy_widget(button), NULL);
+	data = (t_button_data *)button->data;
+	*data = (t_button_data){0};
+	ft_strcpy(button->name, "onoff_button");
+	ui_set_widget_colors(button, 0xFF6F6F6F, 0xFF7F7F7F, 0xFF8F8F8F);
+	button->cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+	button->render = ui_widget_basic_render;
+	button->destroy = ui_button_destroy;
+	button->event = ui_button_event;
+	button->texture = ui_new_texture(parent->renderer, 32, 32, button->colors[button->state]);
+	button->is_on = false;
+	if (ui_add_child(parent, button) != UI_SUCCESS)
+		return (ui_destroy_widget(button), NULL);
 	return (button);
 }

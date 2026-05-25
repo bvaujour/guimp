@@ -3,34 +3,44 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
+#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/10/09 16:03:27 by bvaujour         ###   ########.fr        #
+#    Updated: 2026/04/20 16:51:50 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libui.a
 
+CC = cc
+
 OBJ_DIR = obj
 
-SRC =	ui_utils.c						\
-		ui_window.c						\
-		ui_core.c						\
-		ui_destroy.c					\
-		ui_surface.c					\
-		ui_button.c						\
-		ui_box.c						\
-		ui_box_settings.c				\
-		ui_render.c						\
-		ui_update.c						\
-		ui_build.c						\
+SRC =	ui_core.c \
+		ui_engine.c \
+		ui_widget_user.c \
+		ui_widget.c \
+		ui_window.c \
+		ui_utils.c \
+		ui_button.c \
+		ui_slider.c \
+		ui_box.c \
+		ui_layer.c \
+		ui_layer_user.c \
+		ui_input.c \
+		ui_text.c \
+		ui_image.c \
+		ui_prefabs.c \
+		ui_canvas.c
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-CFLAGS = -Wall -Wextra -Werror -g -ISDL/include/SDL2 -ISDL_ttf/include/SDL2 -ISDL_image/include/SDL2
+SDL_CFLAGS = $(shell pkg-config --cflags sdl2 SDL2_image SDL2_ttf)
 
-CC = cc
+CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS += -I.
+CFLAGS += -Ilibft
+CFLAGS += $(SDL_CFLAGS)
 
 all: $(NAME)
 
@@ -45,7 +55,7 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -rf $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
