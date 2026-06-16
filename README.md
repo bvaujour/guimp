@@ -20,13 +20,11 @@ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 make && ./guimp
 ```
 
-## Screenshot
+## Screencast
 
 [![Voir la démo](Screenshot.png)](https://www.youtube.com/watch?v=oCEkPwQBrj0)
 
 ---
-
-https://youtu.be/oCEkPwQBrj0
 
 # Backend: libui
 
