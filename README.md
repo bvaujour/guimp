@@ -22,7 +22,7 @@ make && ./guimp
 
 ## Screenshot
 
-![Screenshot](Screenshot.png)
+[![Voir la démo](Screenshot.png)](https://www.youtube.com/watch?v=oCEkPwQBrj0)
 
 ---
 
