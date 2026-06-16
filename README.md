@@ -26,6 +26,8 @@ make && ./guimp
 
 ---
 
+https://youtu.be/oCEkPwQBrj0
+
 # Backend: libui
 
 The first part of the project consists of creating a custom **libui** library, similar to **libft**, providing a complete graphical user interface framework.
