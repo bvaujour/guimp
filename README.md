@@ -20,9 +20,13 @@ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 make && ./guimp
 ```
 
+---
+
 ## Screencast
 
 [![Voir la démo](Screenshot.png)](https://www.youtube.com/watch?v=oCEkPwQBrj0)
+
+Click the image above to watch demo on youtube
 
 ---
 
