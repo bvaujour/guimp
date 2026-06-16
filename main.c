@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/05/06 12:24:53 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/06/16 13:31:13 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -859,7 +859,6 @@ void	base_init(t_data *data)
 	set_active_sticker(data, 0);
 	new_canvas(data, 800, 600);
 	ui_set_widget_colors(data->wcolor.pipette_box, pack_color(data->color, data->brightness), pack_color(data->color, data->brightness), pack_color(data->color, data->brightness));
-	ui_create_prefab_modal_info_window(data->core, 500, 300, CENTER_CHILDS, "Guimp (42 school project)\nFrom\nBruno Vaujour\nXavier Charle\nMatiya Deruelle", 25);
 }
 
 void	style_init(t_data *data, t_style *style)
