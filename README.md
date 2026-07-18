@@ -1,67 +1,31 @@
-<h1 align="center">GUImp</h1>
+# GUImp
 
-<p align="center">
-  <b>A GIMP-style image editor written in C, running on a graphical toolkit built entirely from scratch.</b><br>
-  No GTK. No Qt. Just SDL2 for pixels, and a homemade UI library (with its own CSS theming engine) for everything else.
-</p>
+Un éditeur d'images en C, dans l'esprit de GIMP, construit au-dessus d'une bibliothèque d'interface graphique développée entièrement de zéro. Pas de GTK ni de Qt : SDL2 sert uniquement à afficher les pixels, et une bibliothèque maison gère tout le reste.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white">
-  <img src="https://img.shields.io/badge/graphics-SDL2-1D4ED8">
-  <img src="https://img.shields.io/badge/UI-custom%20toolkit-533483">
-  <img src="https://img.shields.io/badge/theming-CSS%20engine-116cdb">
-  <img src="https://img.shields.io/badge/42-School-black">
-  <img src="https://img.shields.io/badge/handcrafted-no%20AI%20assistance-2ea44f">
-</p>
+![Interface de GUImp](Screenshot.png)
 
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=oCEkPwQBrj0">
-    <img src="demo-thumbnail.png" width="760" alt="Watch the GUImp demo on YouTube">
-  </a>
-</p>
+**[Voir la démo en vidéo sur YouTube](https://www.youtube.com/watch?v=oCEkPwQBrj0)**
 
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=oCEkPwQBrj0">
-    <img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20demo-YouTube-FF0000?logo=youtube&logoColor=white&style=for-the-badge" alt="Watch the demo on YouTube">
-  </a>
-</p>
+## Présentation
 
----
+Le projet est en réalité composé de deux parties :
 
-## What is this?
+1. `libui`, une bibliothèque d'interface graphique complète, écrite de zéro au-dessus de SDL2 : fenêtres, widgets, événements, thèmes, glisser-déposer.
+2. GUImp, un éditeur d'images léger, construit uniquement sur `libui`.
 
-GUImp is really **two projects in one**:
+La contrainte du sujet est stricte : l'éditeur ne doit jamais appeler SDL, le système ou une autre bibliothèque graphique directement. Chaque pixel, chaque clic et chaque menu passe par `libui`. L'intérêt du projet ne se limite donc pas à l'éditeur, mais surtout à la bibliothèque qui le fait tourner.
 
-1. **`libui`** — a complete graphical user interface library, written from zero on top of SDL2. Windows, widgets, events, theming, drag and drop: the whole framework, hand built.
-2. **GUImp** — a lightweight image editor, in the spirit of GIMP, built **exclusively** on `libui`.
+## La bibliothèque `libui`
 
-The hard rule of the project: the editor is **never allowed to call SDL, the OS, or any other graphics library directly.** Every pixel, every click and every menu goes through `libui`. So the interesting part is not just the editor, it is the toolkit underneath it.
+- Widgets : boutons, labels, images, champs de saisie, zones de texte, cases à cocher, boutons radio, curseurs, listes déroulantes, barres de progression, et conteneurs imbriqués librement.
+- Fenêtres : fenêtres génériques et boîtes de dialogue modales prêtes à l'emploi (`OK`, `OK / Annuler`).
+- Événements et callbacks : associer son propre comportement aux clics, survols, touches clavier, changements de curseur, validation de saisie, fermeture de fenêtre et dépôt de fichier.
+- Prefabs : blocs réutilisables comme les sélecteurs de fichier et de police, les en-têtes et les menus standards.
+- Divers : fenêtres et éléments défilables, raccourcis clavier par élément, glisser-déposer.
 
----
+### Des widgets construits comme des objets
 
-## Highlights
-
-- 🧱 **A GUI toolkit from scratch** (`libui`): windows, modal dialogs, buttons, menus, labels, text fields and text areas, checkboxes, radio buttons, sliders, drop down lists, progress bars, and nested widgets.
-- 🎨 **A homemade CSS theming engine.** Widget colors and styles are described in a plain `style.css` file, parsed and applied at runtime. Change the look of the whole app without touching a line of C.
-- 🧩 **Object oriented design in pure C.** Each widget carries its own `build` / `update` / `render` / `event` / `destroy` function pointers, wired to an event and callback system (`onclick`, `onslider`, `onfiledropped`, and more).
-- 🖱️ **Real interaction.** Mouse, keyboard and focus events, per tool cursors, scrolling, and drag and drop onto both widgets and windows.
-- 🖼️ **A genuine image editor** on top of it all: brush, shapes, fill, color picker, text, stickers, layers and PNG / JPEG import and export.
-
----
-
-## The toolkit: `libui`
-
-`libui` is the layer that makes GUImp possible. It provides:
-
-- **Widgets:** buttons, labels, images, editable inputs, text areas, checkboxes, radio buttons, sliders, drop down lists, progress bars, and containers that nest freely.
-- **Windows:** generic windows plus ready made modal dialogs (`OK`, `OK / Cancel`).
-- **Events and callbacks:** bind your own behavior to clicks, releases, hover, key presses, slider changes, input validation, window close and file drop.
-- **Prefabs:** reusable building blocks such as file and font selection dialogs, headers and standard menus.
-- **Extras:** scrollable windows and elements, per element hotkeys, and drag and drop.
-
-### Widgets are objects (function pointers as methods)
-
-There is no `class` keyword in C, so `libui` builds objects by hand. Every widget, whatever its type, is the **same struct** carrying its own behavior through function pointers:
+Il n'y a pas de mot-clé `class` en C, alors `libui` construit ses objets à la main. Chaque widget, quel que soit son type, est la même structure qui porte son comportement à travers des pointeurs de fonctions :
 
 ```c
 typedef struct s_widget
@@ -69,7 +33,7 @@ typedef struct s_widget
     char                name[128];
     struct s_core       *core;
     t_widget            *owning_window;
-    struct s_widget     **childs;          // nested widgets
+    struct s_widget     **childs;          // widgets imbriqués
     struct s_widget     *parent;
     e_widget_type       type;
     e_widget_state      state;
@@ -77,9 +41,9 @@ typedef struct s_widget
     bool                is_draggable;
     bool                is_resizable;
     SDL_Point           scroll;
-    /* ... geometry, texture, flags, cursor ... */
+    /* ... géométrie, texture, drapeaux, curseur ... */
 
-    // Behavior of this widget, wired like a vtable:
+    // Comportement de ce widget, câblé comme une vtable :
     void  (*event)(struct s_widget *widget);
     void  (*update)(struct s_widget *widget);
     void  (*render)(struct s_widget *widget);
@@ -88,11 +52,11 @@ typedef struct s_widget
 }   t_widget;
 ```
 
-A button, a slider, a window or the canvas are all this one type: what makes them different is the set of functions plugged into `build` / `render` / `event` / `update` / `destroy`. Adding a new widget means writing those handlers and attaching them, no shared code to fork. This is polymorphism and encapsulation, expressed with function pointers instead of a language feature.
+Un bouton, un curseur, une fenêtre ou le canevas sont tous ce même type : ce qui les distingue, ce sont les fonctions branchées sur `build` / `render` / `event` / `update` / `destroy`. Ajouter un nouveau type de widget revient à écrire ces fonctions et à les attacher, sans dupliquer de code. C'est du polymorphisme et de l'encapsulation, exprimés avec des pointeurs de fonctions plutôt qu'avec une fonctionnalité du langage.
 
-### Theming with CSS
+### Un thème décrit en CSS
 
-Instead of hard coding colors, `libui` reads a stylesheet. This is the actual theme shipped with GUImp:
+Plutôt que de coder les couleurs en dur, `libui` lit une feuille de style. Voici le thème réellement livré avec GUImp :
 
 ```css
 window {
@@ -113,65 +77,57 @@ slider {
 }
 ```
 
-The parser (`css_parser.c`) reads the file, the applier (`css_apply.c`) maps each selector (`window`, `button`, `box`, `slider`, `text`, `canvas`) onto the matching widgets. Colors accept both `#RRGGBB` and `#AARRGGBB`.
+Le parseur (`css_parser.c`) lit le fichier, et `css_apply.c` associe chaque sélecteur (`window`, `button`, `box`, `slider`, `text`, `canvas`) aux widgets correspondants. Les couleurs acceptent les formats `#RRGGBB` et `#AARRGGBB`.
 
----
+## L'éditeur GUImp
 
-## The editor: GUImp
+Construit uniquement avec `libui`, l'éditeur propose :
 
-Built with `libui` only, the editor offers:
+- Outils de dessin : pinceau, gomme, lignes droites, et un menu de formes (lignes, rectangles, carrés, cercles) en mode plein ou creux.
+- Navigation : outils zoom et main, épaisseur et rayon de pinceau réglables.
+- Couleur : roue RGB, curseurs RGB, réglage de luminosité, et pipette pour prélever une couleur directement sur l'image.
+- Remplissage : pot de peinture.
+- Texte : insertion de texte avec choix de la couleur, de la police et de la taille.
+- Stickers : dépôt d'images prédéfinies sur le canevas.
+- Calques et presse-papiers : nouveaux calques, couper, copier, coller, effacer.
+- Fichiers : import et export en PNG et JPEG.
+- Confort : le curseur change selon l'outil sélectionné, et la touche ESC ferme tout proprement.
 
-- **Drawing tools:** brush, eraser, straight lines, and a shape menu (lines, rectangles, squares, circles) in filled or hollow modes.
-- **Navigation:** zoom and hand tools, adjustable brush thickness and radius.
-- **Color:** RGB wheel, RGB sliders, brightness control, and an eyedropper to pick colors straight from the image.
-- **Fill:** paint bucket.
-- **Text:** insert text with a choice of color, font and font size.
-- **Stickers:** drop predefined images onto the canvas.
-- **Layers and clipboard:** new layers, cut, copy, paste and clear.
-- **Files:** import and export in **PNG** and **JPEG**.
-- **Feel:** the cursor changes with the selected tool; `ESC` closes everything cleanly.
+## Compilation et lancement
 
----
-
-## Build and run
-
-**Dependencies** (Debian / Ubuntu):
+Dépendances (Debian / Ubuntu) :
 
 ```bash
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 ```
 
-**Build and launch:**
+Compilation et exécution :
 
 ```bash
 make && ./guimp
 ```
 
----
-
-## Project layout
+## Organisation du projet
 
 ```
 guimp/
-├── main.c            # editor logic and UI assembly
-├── draws.c           # drawing / rendering helpers
-├── build.c           # window and layout construction
-├── css_parser.c      # CSS stylesheet parser
-├── css_apply.c       # applies parsed styles to widgets
+├── main.c            # logique de l'éditeur et assemblage de l'interface
+├── draws.c           # fonctions de dessin et de rendu
+├── build.c           # construction des fenêtres et de la mise en page
+├── css_parser.c      # parseur de la feuille de style
+├── css_apply.c       # application des styles aux widgets
 ├── utils.c
 ├── about.c
 ├── guimp.h
-├── style.css         # the editable interface theme
-├── assets/           # cursors, icons, stickers
-└── libui/            # the custom GUI toolkit
+├── style.css         # thème de l'interface, modifiable
+├── assets/           # curseurs, icônes, stickers
+└── libui/            # la bibliothèque d'interface maison
 ```
 
----
+## Contexte
 
-## Context
+Projet réalisé à l'École 42, dont l'objectif était de concevoir une bibliothèque d'interface réutilisable, puis de le prouver en construisant une vraie application par-dessus.
 
-Built as a project at [42 School](https://42.fr), where the goal was to design a reusable UI library and then prove it by building a real application on top of it.
+L'ensemble de `libui` et de GUImp a été écrit entièrement à la main, sans assistance d'IA.
 
-Every line of `libui` and GUImp was written entirely by hand, with no AI assistance.
-
-**Author:** [bvaujour](https://github.com/bvaujour)
+Auteur : [bvaujour](https://github.com/bvaujour)
