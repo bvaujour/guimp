@@ -11,14 +11,19 @@
   <img src="https://img.shields.io/badge/UI-custom%20toolkit-533483">
   <img src="https://img.shields.io/badge/theming-CSS%20engine-116cdb">
   <img src="https://img.shields.io/badge/42-School-black">
+  <img src="https://img.shields.io/badge/handcrafted-no%20AI%20assistance-2ea44f">
 </p>
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=oCEkPwQBrj0">
-    <img src="Screenshot.png" width="720" alt="GUImp interface — click to watch the demo">
+    <img src="demo-thumbnail.png" width="760" alt="Watch the GUImp demo on YouTube">
   </a>
-  <br>
-  <i>Click the screenshot to watch the demo on YouTube.</i>
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=oCEkPwQBrj0">
+    <img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20demo-YouTube-FF0000?logo=youtube&logoColor=white&style=for-the-badge" alt="Watch the demo on YouTube">
+  </a>
 </p>
 
 ---
@@ -166,5 +171,7 @@ guimp/
 ## Context
 
 Built as a project at [42 School](https://42.fr), where the goal was to design a reusable UI library and then prove it by building a real application on top of it.
+
+Every line of `libui` and GUImp was written entirely by hand, with no AI assistance.
 
 **Author:** [bvaujour](https://github.com/bvaujour)
