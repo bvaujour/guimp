@@ -1,20 +1,111 @@
-# GUImp
+<h1 align="center">GUImp</h1>
 
-A project from **42 School** consisting of creating a custom graphical user interface library using **SDL2**, and then using this library to build a lightweight version of GIMP.
+<p align="center">
+  <b>A GIMP-style image editor written in C, running on a graphical toolkit built entirely from scratch.</b><br>
+  No GTK. No Qt. Just SDL2 for pixels, and a homemade UI library (with its own CSS theming engine) for everything else.
+</p>
 
-This project aims to recreate a simplified image editor with custom UI rendering and basic image manipulation features.
+<p align="center">
+  <img src="https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white">
+  <img src="https://img.shields.io/badge/graphics-SDL2-1D4ED8">
+  <img src="https://img.shields.io/badge/UI-custom%20toolkit-533483">
+  <img src="https://img.shields.io/badge/theming-CSS%20engine-116cdb">
+  <img src="https://img.shields.io/badge/42-School-black">
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=oCEkPwQBrj0">
+    <img src="Screenshot.png" width="720" alt="GUImp interface — click to watch the demo">
+  </a>
+  <br>
+  <i>Click the screenshot to watch the demo on YouTube.</i>
+</p>
 
 ---
 
-## Dependencies
+## What is this?
+
+GUImp is really **two projects in one**:
+
+1. **`libui`** — a complete graphical user interface library, written from zero on top of SDL2. Windows, widgets, events, theming, drag and drop: the whole framework, hand built.
+2. **GUImp** — a lightweight image editor, in the spirit of GIMP, built **exclusively** on `libui`.
+
+The hard rule of the project: the editor is **never allowed to call SDL, the OS, or any other graphics library directly.** Every pixel, every click and every menu goes through `libui`. So the interesting part is not just the editor, it is the toolkit underneath it.
+
+---
+
+## Highlights
+
+- 🧱 **A GUI toolkit from scratch** (`libui`): windows, modal dialogs, buttons, menus, labels, text fields and text areas, checkboxes, radio buttons, sliders, drop down lists, progress bars, and nested widgets.
+- 🎨 **A homemade CSS theming engine.** Widget colors and styles are described in a plain `style.css` file, parsed and applied at runtime. Change the look of the whole app without touching a line of C.
+- 🧩 **Object oriented design in pure C.** Each widget carries its own `build` / `update` / `render` / `event` / `destroy` function pointers, wired to an event and callback system (`onclick`, `onslider`, `onfiledropped`, and more).
+- 🖱️ **Real interaction.** Mouse, keyboard and focus events, per tool cursors, scrolling, and drag and drop onto both widgets and windows.
+- 🖼️ **A genuine image editor** on top of it all: brush, shapes, fill, color picker, text, stickers, layers and PNG / JPEG import and export.
+
+---
+
+## The toolkit: `libui`
+
+`libui` is the layer that makes GUImp possible. It provides:
+
+- **Widgets:** buttons, labels, images, editable inputs, text areas, checkboxes, radio buttons, sliders, drop down lists, progress bars, and containers that nest freely.
+- **Windows:** generic windows plus ready made modal dialogs (`OK`, `OK / Cancel`).
+- **Events and callbacks:** bind your own behavior to clicks, releases, hover, key presses, slider changes, input validation, window close and file drop.
+- **Prefabs:** reusable building blocks such as file and font selection dialogs, headers and standard menus.
+- **Extras:** scrollable windows and elements, per element hotkeys, and drag and drop.
+
+### Theming with CSS
+
+Instead of hard coding colors, `libui` reads a stylesheet. This is the actual theme shipped with GUImp:
+
+```css
+window {
+    background-color: #1a1a2e;
+}
+
+button {
+    background-color: #16213e;
+    hover-color: #116cdb;
+    click-color: #533483;
+    outline: 10;
+}
+
+slider {
+    color: #ffffff;
+    fill-color: #f5e509;
+    outline: 2;
+}
+```
+
+The parser (`css_parser.c`) reads the file, the applier (`css_apply.c`) maps each selector (`window`, `button`, `box`, `slider`, `text`, `canvas`) onto the matching widgets. Colors accept both `#RRGGBB` and `#AARRGGBB`.
+
+---
+
+## The editor: GUImp
+
+Built with `libui` only, the editor offers:
+
+- **Drawing tools:** brush, eraser, straight lines, and a shape menu (lines, rectangles, squares, circles) in filled or hollow modes.
+- **Navigation:** zoom and hand tools, adjustable brush thickness and radius.
+- **Color:** RGB wheel, RGB sliders, brightness control, and an eyedropper to pick colors straight from the image.
+- **Fill:** paint bucket.
+- **Text:** insert text with a choice of color, font and font size.
+- **Stickers:** drop predefined images onto the canvas.
+- **Layers and clipboard:** new layers, cut, copy, paste and clear.
+- **Files:** import and export in **PNG** and **JPEG**.
+- **Feel:** the cursor changes with the selected tool; `ESC` closes everything cleanly.
+
+---
+
+## Build and run
+
+**Dependencies** (Debian / Ubuntu):
 
 ```bash
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 ```
 
----
-
-## Launching
+**Build and launch:**
 
 ```bash
 make && ./guimp
@@ -22,174 +113,27 @@ make && ./guimp
 
 ---
 
-## Screencast
+## Project layout
 
-[![Voir la démo](Screenshot.png)](https://www.youtube.com/watch?v=oCEkPwQBrj0)
-
-Click the image above to watch demo on youtube
-
----
-
-# Backend: libui
-
-The first part of the project consists of creating a custom **libui** library, similar to **libft**, providing a complete graphical user interface framework.
-
-The library must be able to:
-
-* Create graphical windows with customizable parameters:
-
-  * Size
-  * Resizability
-  * Background color or image
-  * Visual effects
-  * Themes and styles
-
-* Provide different types of windows:
-
-  * Generic windows
-  * Modal **OK** dialogs
-  * Modal **OK / Cancel** dialogs
-
-* Support a variety of UI elements:
-
-  * Buttons
-  * Menus
-  * Text labels
-  * Images
-  * Editable text fields
-  * Text areas
-  * Checkboxes
-  * Radio buttons
-  * Sliders
-  * Drop-down lists
-  * Progress bars
-
-* Allow each element to be customized through:
-
-  * Styles
-  * Themes
-  * Colors
-  * Fonts
-  * Functional behaviors
-
-* Support nested elements:
-
-  * Menus inside menus
-  * Images inside buttons
-  * Other hierarchical UI compositions
-
-* Manage user interactions:
-
-  * Mouse clicks
-  * Focus events
-  * Keyboard events
-  * Custom callbacks
-  * Default element behaviors
-
-* Demonstrate the coexistence of built-in and user-defined actions.
-
-* Allow interactions between elements:
-
-  * Example: enabling a button displays additional options.
-
-* Provide a default hotkey system for each element type.
-
-* Support scrolling:
-
-  * Scrollable windows
-  * Scrollable UI elements when applicable
-
-* Include reusable prefabs for common interfaces:
-
-  * Information bars
-  * Standard menus (Open, Save, Quit, etc.)
-
-* Provide at least:
-
-  * A file selection dialog prefab
-  * A font selection dialog prefab
-
-* Support drag-and-drop on:
-
-  * UI elements
-  * Windows
-
-All implemented features that are not directly used in GUImp must still be demonstrated during the project defense.
+```
+guimp/
+├── main.c            # editor logic and UI assembly
+├── draws.c           # drawing / rendering helpers
+├── build.c           # window and layout construction
+├── css_parser.c      # CSS stylesheet parser
+├── css_apply.c       # applies parsed styles to widgets
+├── utils.c
+├── about.c
+├── guimp.h
+├── style.css         # the editable interface theme
+├── assets/           # cursors, icons, stickers
+└── libui/            # the custom GUI toolkit
+```
 
 ---
 
-# Frontend: GUImp
+## Context
 
-The graphical editor must satisfy the following requirements:
+Built as a project at [42 School](https://42.fr), where the goal was to design a reusable UI library and then prove it by building a real application on top of it.
 
-## General Behavior
-
-* Pressing **ESC** must properly close all windows and terminate the program.
-* Clicking the window close button must close the corresponding window.
-* If the rendering window is closed, the entire program must exit properly.
-* Image rendering must take place within a single rendering window.
-
-## Tool Palette
-
-A dedicated tool window must contain at least:
-
-* Brush tool
-
-* Eraser tool
-
-* Line drawing tool
-
-* Shape drawing menu supporting:
-
-  * Lines
-  * Rectangles
-  * Squares
-  * Circles
-  * Filled and outlined variants
-
-* Zoom and hand tools
-
-* Line thickness selection
-
-* Image import menu
-
-* Color selection tools:
-
-  * RGB wheel
-  * RGB sliders
-  * Equivalent color picker interface
-
-* Workspace clear button
-
-* Brush/sticker menu allowing the user to place predefined images smoothly onto the canvas
-
-* Fill tool (paint bucket)
-
-* Text insertion tool with:
-
-  * Color selection
-  * Font selection
-  * Font size selection
-
-* Eyedropper tool for picking colors directly from the image
-
-## Additional Features
-
-* The mouse cursor must change depending on the selected tool.
-* Images must be savable in a format of your choice.
-* Image import must support:
-
-  * JPEG
-  * PNG
-
-  with particular emphasis on JPEG support.
-
----
-
-# Important Constraint
-
-All graphical operations must exclusively use the **libui** library.
-
-The GUImp application must **never directly use SDL, the operating system graphical framework, or any other graphics management library**.
-
-All rendering, event handling, and interface management must go through **libui only**.
+**Author:** [bvaujour](https://github.com/bvaujour)
