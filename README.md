@@ -54,6 +54,37 @@ The hard rule of the project: the editor is **never allowed to call SDL, the OS,
 - **Prefabs:** reusable building blocks such as file and font selection dialogs, headers and standard menus.
 - **Extras:** scrollable windows and elements, per element hotkeys, and drag and drop.
 
+### Widgets are objects (function pointers as methods)
+
+There is no `class` keyword in C, so `libui` builds objects by hand. Every widget, whatever its type, is the **same struct** carrying its own behavior through function pointers:
+
+```c
+typedef struct s_widget
+{
+    char                name[128];
+    struct s_core       *core;
+    t_widget            *owning_window;
+    struct s_widget     **childs;          // nested widgets
+    struct s_widget     *parent;
+    e_widget_type       type;
+    e_widget_state      state;
+    SDL_Color           colors[NUM_STATE];
+    bool                is_draggable;
+    bool                is_resizable;
+    SDL_Point           scroll;
+    /* ... geometry, texture, flags, cursor ... */
+
+    // Behavior of this widget, wired like a vtable:
+    void  (*event)(struct s_widget *widget);
+    void  (*update)(struct s_widget *widget);
+    void  (*render)(struct s_widget *widget);
+    void  (*destroy)(struct s_widget *widget);
+    void  (*build)(struct s_widget *widget);
+}   t_widget;
+```
+
+A button, a slider, a window or the canvas are all this one type: what makes them different is the set of functions plugged into `build` / `render` / `event` / `update` / `destroy`. Adding a new widget means writing those handlers and attaching them, no shared code to fork. This is polymorphism and encapsulation, expressed with function pointers instead of a language feature.
+
 ### Theming with CSS
 
 Instead of hard coding colors, `libui` reads a stylesheet. This is the actual theme shipped with GUImp:
